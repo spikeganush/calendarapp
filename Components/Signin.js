@@ -5,6 +5,8 @@ import { Input, NativeBaseProvider, Button, Icon, Box, Image, AspectRatio } from
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { alignContent, flex, flexDirection, width } from 'styled-system';
+import { Feedback } from './Feedback';
+
 
 
 
@@ -99,9 +101,11 @@ import { alignContent, flex, flexDirection, width } from 'styled-system';
       {/* Button */}
       <View style={styles.buttonStyle}>
         <Button  style={styles.buttonDesign}
-        onPress={ () => { props.handler(username, email,password) }}>
+        onPress={ () => { props.handler( email,password ) }}>
             LOGIN
         </Button>
+        <Feedback message={props.error} />
+
       </View>
 
       {/* Line */}
@@ -281,4 +285,4 @@ const styles = StyleSheet.create({
     marginRight:15,
     justifyContent:'space-around'
   },
-});
+})

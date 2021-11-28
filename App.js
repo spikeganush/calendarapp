@@ -7,6 +7,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import  Signup  from './components/Signup'
 import  Signin  from './components/Signin'
 import  { Home }  from './components/Home';
+import  { Signout }  from './components/Signout';
+
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -40,26 +42,30 @@ const Stack = createStackNavigator();
 
 function App() {
   const[ auth, setAuth ] = useState()
+  const FBauth= getAuth()
+
   const[ user, setUser ] = useState()
+  //errors
   const [signupError, setSignupError ] = useState()
   const [signinError, setSigninError ] = useState()
   const [ data, setData ] = useState()
+  
 
 
-  /*useEffect(() => {
+  useEffect(() => {
     onAuthStateChanged( FBauth, (user) => {
       if( user ) { 
         setAuth(true) 
         setUser(user)
         // console.log( 'authed')
-        if( !data ) { getData() }
+        //if( !data ) { getData() }
       }
       else {
         setAuth(false)
         setUser(null)
       }
     })
-  })*/
+  })
 
   // useEffect( () => {
   //   if( !data && user ) {
@@ -68,9 +74,8 @@ function App() {
   // }, [data,auth, user])
 
   const SignupHandler = ( email, password ) => {
-    const auth= getAuth()
     setSignupError(null)
-    createUserWithEmailAndPassword( auth, email, password )
+    createUserWithEmailAndPassword( FBauth, email, password )
     .then( ( userCredential ) => { 
       setUser(userCredential)
       setAuth( true )
@@ -90,8 +95,15 @@ function App() {
       setSigninError(message) 
     })
   }
+  const SignoutHandler = () => {
+    signOut( FBauth ).then( () => {
+      setAuth( false )
+      setUser( null )
+    })
+    .catch( (error) => console.log(error.code) )
+  }
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}} >
+    <Stack.Navigator >
       <Stack.Screen name="Signup" options={{title: 'Sign up'}}>
           { (props) => 
           <Signup {...props} 
@@ -113,7 +125,13 @@ function App() {
           handler={SigninHandler} 
           /> }
         </Stack.Screen>
-        <Stack.Screen name="Home" component={Home}/>
+        <Stack.Screen name="Home" options={{
+          headerTitle: "Home",
+          headerRight: (props) => <Signout {...props} handler={SignoutHandler} />
+        }}>
+          { (props) => 
+          <Home {...props} auth={auth} /> }
+        </Stack.Screen>
     </Stack.Navigator>
   );
 }

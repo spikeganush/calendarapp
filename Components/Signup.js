@@ -5,6 +5,8 @@ import { Input, NativeBaseProvider, Button, Icon, Box, Image, AspectRatio } from
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { alignContent, flex, flexDirection, width } from 'styled-system';
+import { Feedback } from './Feedback';
+
 
 
 
@@ -78,14 +80,10 @@ import { alignContent, flex, flexDirection, width } from 'styled-system';
     }
   }, [validUsername, validEmail, validPassword, validConfirmedPassword])
 
-  /*useEffect( () => {
-    if( props.auth === true ) {
-      navigation.reset({ index: 0, routes: [ {name: 'Home'} ] })
-    }
-  }, [props.auth])*/
+   
   useEffect( () => {
     if( props.auth === true ) {
-      navigation.navigate('Home')
+        navigation.reset({ index: 0, routes: [ {name: 'Home'} ] })
     }
   }, [props.auth])
 
@@ -241,6 +239,8 @@ import { alignContent, flex, flexDirection, width } from 'styled-system';
         >
             REGISTER NOW
         </Button>
+        <Feedback message={props.error} />
+
       </View>
       
       {/* Line */}
