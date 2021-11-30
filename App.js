@@ -8,6 +8,8 @@ import  Signup  from './Components/Signup';
 import  Signin  from './Components/Signin';
 import  { Home }  from './Components/Home';
 import  { Signout }  from './Components/Signout';
+import  AddTask  from './Components/AddTask';
+
 
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -132,6 +134,15 @@ function App() {
           { (props) => 
           <Home {...props} auth={auth} /> }
         </Stack.Screen>
+
+        <Stack.Screen name="AddTask" options={{
+          headerTitle: "AddTask",
+          headerRight: (props) => <Signout {...props} handler={SignoutHandler} />
+        }}>
+          { (props) => 
+          <AddTask {...props} auth={auth} /> }
+        </Stack.Screen>
+        
     </Stack.Navigator>
   );
 }
