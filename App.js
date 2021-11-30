@@ -45,6 +45,8 @@ const Stack = createStackNavigator();
 function App() {
   const[ auth, setAuth ] = useState()
   const FBauth= getAuth()
+  const firestore = getFirestore();
+
 
   const[ user, setUser ] = useState()
   //errors
@@ -75,10 +77,13 @@ function App() {
   //   }
   // }, [data,auth, user])
 
-  const SignupHandler = ( email, password ) => {
+  const SignupHandler = ( email, password, username ) => {
     setSignupError(null)
     createUserWithEmailAndPassword( FBauth, email, password )
     .then( ( userCredential ) => { 
+      createUser('users', {id: userCredential.user.uid, email:userCredential.user.email, displayName:username})
+      console.log(username)
+      console.log(userCredential)
       setUser(userCredential)
       setAuth( true )
     } )
@@ -104,6 +109,15 @@ function App() {
     })
     .catch( (error) => console.log(error.code) )
   }
+  const createUser = async ( collection , data ) => {
+    //adding data to a collection with automatic id
+    //const ref = await addDoc( collection(FSdb, FScollection ), data )
+    await setDoc( 
+      doc( firestore, collection, data.id) , data )
+      
+    //console.log( ref.id )
+  }
+
   return (
     <Stack.Navigator >
       <Stack.Screen name="Signup" options={{title: 'Sign up'}}>

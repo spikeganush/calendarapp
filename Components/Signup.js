@@ -68,7 +68,7 @@ import { Feedback } from './Feedback';
     console.log(password)
     console.log(props.handler)
 
-    props.handler( email, password )
+    props.handler( email, password, username )
   }
 
   useEffect( () => {
