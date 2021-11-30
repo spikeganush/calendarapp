@@ -2,6 +2,8 @@ import React, {useEffect,useState} from 'react'
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { Input, NativeBaseProvider, Button, Icon, Box, Image, AspectRatio } from 'native-base';
+import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+
 
 
  export function Home ( props ) {
@@ -13,9 +15,14 @@ import { Input, NativeBaseProvider, Button, Icon, Box, Image, AspectRatio } from
    }
   }, [props.auth])
 
+   
+
   return(
     <View>
-      <Text>Home</Text>
+      <Agenda>
+
+      </Agenda>
+
     </View>
   );
 }

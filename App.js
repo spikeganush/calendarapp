@@ -4,10 +4,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // components
-import  Signup  from './components/Signup'
-import  Signin  from './components/Signin'
-import  { Home }  from './components/Home';
-import  { Signout }  from './components/Signout';
+import  Signup  from './Components/Signup';
+import  Signin  from './Components/Signin';
+import  { Home }  from './Components/Home';
+import  { Signout }  from './Components/Signout';
 
 
 import { NavigationContainer } from '@react-navigation/native';
