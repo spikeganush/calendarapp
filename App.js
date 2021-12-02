@@ -9,6 +9,8 @@ import  Signin  from './Components/Signin';
 import  { Home }  from './Components/Home';
 import  { Signout }  from './Components/Signout';
 import  AddTask  from './Components/AddTask';
+import  EditTask  from './Components/EditTask';
+
 
 
 
@@ -34,18 +36,17 @@ import {
 
 
 
-initializeApp(firebaseConfig)
-
+const FBapp = initializeApp( firebaseConfig)
+const FSdb = initializeFirestore(FBapp, {useFetchStreams: false})
 
 const Stack = createStackNavigator();
+const FBauth= getAuth()
 
 
 
 
-function App() {
+function App(props) {
   const[ auth, setAuth ] = useState()
-  const FBauth= getAuth()
-  const firestore = getFirestore();
 
 
   const[ user, setUser ] = useState()
@@ -53,6 +54,7 @@ function App() {
   const [signupError, setSignupError ] = useState()
   const [signinError, setSigninError ] = useState()
   const [ data, setData ] = useState()
+  const[ userId, setUserId ] = useState()
   
 
 
@@ -62,8 +64,8 @@ function App() {
         setAuth(true) 
         setUser(user)
         // console.log( 'authed')
-        //if( !data ) { getData() }
-      }
+      if( !data ) { getData() }
+          }
       else {
         setAuth(false)
         setUser(null)
@@ -82,14 +84,16 @@ function App() {
     createUserWithEmailAndPassword( FBauth, email, password )
     .then( ( userCredential ) => { 
       createUser('users', {id: userCredential.user.uid, email:userCredential.user.email, displayName:username})
-      console.log(username)
-      console.log(userCredential)
+      //createTask('users', {id: task.id, name:task.name, dateString:task.dateString, status: false})
       setUser(userCredential)
+      setUserId(userCredential.uid)
       setAuth( true )
     } )
     .catch( (error) => { setSignupError(error.code) })
   }
-
+  
+  
+  
   const SigninHandler = ( email, password ) => {
     signInWithEmailAndPassword( FBauth, email, password )
     .then( (userCredential) => {
@@ -112,12 +116,44 @@ function App() {
   const createUser = async ( collection , data ) => {
     //adding data to a collection with automatic id
     //const ref = await addDoc( collection(FSdb, FScollection ), data )
-    await setDoc( 
-      doc( firestore, collection, data.id) , data )
+    const ref = await setDoc( 
+      doc(FSdb, collection, data.id) , data)
+      console.log("User has added")
+
+      .catch((err) => {
+        console.log(err)
+    })
       
-    //console.log( ref.id )
   }
 
+  const createTask = async ( collection , data ) => {
+    //adding data to a collection with automatic id
+    //const ref = await addDoc( collection(FSdb, FScollection ), data )
+    const ref = await setDoc( doc( FSdb, `usertasks/${user.uid}/documents/${ new Date().getTime() } }`), data )
+    //console.log( ref.id )
+  }
+  /*const createTask = async (collection , data) => {
+    await setDoc(
+      doc(firestore, collection, data.id, 'tasks', 'task'), data)
+  } */
+  const getData = () => {
+     //console.log("que es ",user.uid)
+    const FSquery = query( collection( FSdb, `usertasks/${user.uid}/documents`) )
+    const unsubscribe = onSnapshot( FSquery, ( querySnapshot ) => {
+      let FSdata = []
+      querySnapshot.forEach( (doc) => {
+        console.log("probando id", doc.id)
+        console.log("probando name", doc.name)
+
+        let item = {}
+        item = doc.data()
+        item.id = doc.id
+        FSdata.push( item )
+      })
+      setData( FSdata )
+      console.log(FSdata)
+    })
+  }
   return (
     <Stack.Navigator >
       <Stack.Screen name="Signup" options={{title: 'Sign up'}}>
@@ -146,7 +182,7 @@ function App() {
           headerRight: (props) => <Signout {...props} handler={SignoutHandler} />
         }}>
           { (props) => 
-          <Home {...props} auth={auth} /> }
+          <Home {...props} auth={auth} add={createTask} user={user}  /> }
         </Stack.Screen>
 
         <Stack.Screen name="AddTask" options={{
@@ -156,6 +192,13 @@ function App() {
           { (props) => 
           <AddTask {...props} auth={auth} /> }
         </Stack.Screen>
+        <Stack.Screen name="EditTask" options={{
+          headerTitle: "EditTask",
+          headerRight: (props) => <Signout {...props} handler={SignoutHandler} />
+        }}>
+          { (props) => 
+          <EditTask {...props} auth={auth} /> }
+        </Stack.Screen>
         
     </Stack.Navigator>
   );
@@ -163,11 +206,11 @@ function App() {
 
 
 
-export default () => {
+export default (props) => {
   return (
     <NavigationContainer>
      
-        <App />
+        <App {...props} />
       
     </NavigationContainer>
   )

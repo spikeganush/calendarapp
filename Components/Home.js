@@ -1,9 +1,29 @@
 import React, {useEffect,useState} from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Keyboard,View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { Input, NativeBaseProvider, Button, Icon, Box, Image, AspectRatio } from 'native-base';
 import {Agenda} from 'react-native-calendars';
 import {Card, Avatar} from 'react-native-paper';
+import TaskInputField from './TaskInputField';
+
+// firebase
+
+
+import { 
+  initializeFirestore, 
+  getFirestore, 
+  setDoc, 
+  doc, 
+  addDoc, 
+  collection,
+  query, 
+  where, 
+  onSnapshot, 
+  Firestore, firestore
+} from 'firebase/firestore'
+
+
+
 //import Typography from '../components/Typography';
 
 const timeToString = (time) => {
@@ -12,8 +32,33 @@ const timeToString = (time) => {
 };
 
 
+
  export function Home ( props ) {
+
+
+  
+
+
+
+   
   const navigation = useNavigation()
+  const [tasks, setTasks] = useState([]);
+  //const [id, setId] = useState([]);
+  //const [taskName, setTaskName] = useState([]);
+
+
+  const [dateString, setDateString] = useState();
+  //const [items, setItems] = useState({});
+
+  const items={
+    '2017-05-22': [{name: 'item 1 - any js object'}],
+    '2017-05-23': [{name: 'item 2 - any js object', height: 80}],
+    '2017-05-24': [],
+    '2017-05-25': [{name: 'item 3 - any js object'}, {name: 'any js object'}]
+  };
+
+  
+
 
   useEffect( () => {
    if(!props.auth) {
@@ -22,9 +67,37 @@ const timeToString = (time) => {
   }, [props.auth])
   
 
-  const [items, setItems] = useState({});
+  
+  
+  const addTask = (task) => {
+    //setTaskName=task
+    if (task == null || dateString == null) return;
+    
 
-  const loadItems = (day) => {
+    //setTask=task
+    const id = new Date().getTime().toString()
+
+     //task = { id: id, name: task, dateString: dateString, status: false }
+     const data={id: id, name: task, dateString: dateString, status: false}
+
+     {props.add('userTasks', data)}
+     
+
+     
+
+    setTasks([...tasks, task]);
+    //console.log(tasks)
+    //console.log(tasks)
+    //console.log(item)
+
+
+
+
+    Keyboard.dismiss();
+
+  }
+
+  /*const loadItems = (day) => {
     setTimeout(() => {
       for (let i = -15; i < 85; i++) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
@@ -46,12 +119,12 @@ const timeToString = (time) => {
       });
       setItems(newItems);
     }, 1000);
-  };
+  };*/
 
   const renderItem = (item) => {
     return (
       <TouchableOpacity  style={{marginRight: 10, marginTop: 17} }
-      onPress={() => navigation.navigate("AddTask")}>
+      onPress={() => {navigation.navigate("AddTask")}}>
         <Card>
           <Card.Content>
             <View
@@ -61,7 +134,8 @@ const timeToString = (time) => {
                 alignItems: 'center',
               }}>
               <Text>{item.name}</Text>
-              <Avatar.Text label="J" />
+              <TouchableOpacity onPress={() => navigation.navigate("EditTask")}><Avatar.Text label="+" /></TouchableOpacity>
+             
             </View>
           </Card.Content>
         </Card>
@@ -72,13 +146,16 @@ const timeToString = (time) => {
   return (
     <View style={{flex: 1}}>
       <Agenda
+        onDayPress={(day) => { setDateString(day.dateString);  console.log(dateString)}}
+
         items={items}
-        loadItemsForMonth={loadItems}
+        //loadItemsForMonth={loadItems}
         selected={'2017-05-21'}
         renderItem={renderItem}
       />
+      <TaskInputField addTask={addTask}/>
     </View>
   );
-};
-  
 
+  
+  }

@@ -351,7 +351,7 @@ export default (props) => {
   return (
     <NativeBaseProvider>
      
-        <Signup {...props} />
+        <Signup  {...props}/>
       
     </NativeBaseProvider>
   )

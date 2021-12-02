@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 
+
 const TaskInputField = (props) => {
   const [task, setTask] = useState()
   const [ validInput, setValidInput ] = useState(false)
