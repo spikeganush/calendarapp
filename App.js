@@ -55,6 +55,8 @@ function App(props) {
   const [signinError, setSigninError ] = useState()
   const [ data, setData ] = useState()
   const[ userId, setUserId ] = useState()
+  const[ lisItems, setListItems ] = useState()
+
   
 
 
@@ -152,8 +154,30 @@ function App(props) {
       })
       setData( FSdata )
       console.log(FSdata)
+      transform()
     })
   }
+  transform =() => {
+    console.log("porfavor",(data))
+let item ={}
+const itemList = []
+data.forEach(element => {
+  item={
+    [element.dateString]:{
+      id : element.id,
+      name : element.name,
+      status : element.status
+
+    }
+  }
+  itemList.push(item)
+});
+console.log(itemList)
+setListItems(itemList)
+
+  }
+
+
   return (
     <Stack.Navigator >
       <Stack.Screen name="Signup" options={{title: 'Sign up'}}>
@@ -182,7 +206,7 @@ function App(props) {
           headerRight: (props) => <Signout {...props} handler={SignoutHandler} />
         }}>
           { (props) => 
-          <Home {...props} auth={auth} add={createTask} user={user}  /> }
+          <Home {...props} auth={auth} add={createTask} user={user} lisItems={lisItems} /> }
         </Stack.Screen>
 
         <Stack.Screen name="AddTask" options={{
