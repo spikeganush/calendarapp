@@ -1,100 +1,79 @@
-import React, {useEffect,useState} from 'react'
-import { Keyboard,View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { Input, NativeBaseProvider, Button, Icon, Box, Image, AspectRatio } from 'native-base';
-import {Agenda} from 'react-native-calendars';
-import {Card, Avatar} from 'react-native-paper';
-import TaskInputField from './TaskInputField';
-
-// firebase
-
-
-import { 
-  initializeFirestore, 
-  getFirestore, 
-  setDoc, 
-  doc, 
-  addDoc, 
-  collection,
-  query, 
-  where, 
-  onSnapshot, 
-  Firestore, firestore
-} from 'firebase/firestore'
-
-
+import React, { useEffect, useState } from 'react'
+import {
+  Keyboard,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import {
+  Input,
+  NativeBaseProvider,
+  Button,
+  Icon,
+  Box,
+  Image,
+  AspectRatio,
+} from 'native-base'
+import { Agenda } from 'react-native-calendars'
+import { Card, Avatar } from 'react-native-paper'
+import TaskInputField from './TaskInputField'
 
 //import Typography from '../components/Typography';
 
 const timeToString = (time) => {
-  const date = new Date(time);
-  return date.toISOString().split('T')[0];
-};
+  const date = new Date(time)
+  return date.toISOString().split('T')[0]
+}
 
-
-
- export function Home ( props ) {
-
-
-  
-
-
-
-   
+export function Home(props) {
   const navigation = useNavigation()
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState([])
   //const [id, setId] = useState([]);
   //const [taskName, setTaskName] = useState([]);
 
-
-  const [dateString, setDateString] = useState();
+  const [dateString, setDateString] = useState()
   //const [items, setItems] = useState({});
 
-  const items={
-    '2017-05-22': [{name: 'item 1 - any js object'}],
-    '2017-05-23': [{name: 'item 2 - any js object', height: 80}],
+  console.log(props.listItems)
+
+  const items = {
+    '2017-05-22': [{ name: 'item 1 - any js object' }],
+    '2017-05-23': [{ name: 'item 2 - any js object', height: 80 }],
     '2017-05-24': [],
-    '2017-05-25': [{name: 'item 3 - any js object'}, {name: 'any js object'}]
-  };
+    '2017-05-25': [
+      { name: 'item 3 - any js object' },
+      { name: 'any js object' },
+    ],
+  }
 
-  
-
-
-  useEffect( () => {
-   if(!props.auth) {
-    navigation.reset({ index: 0, routes: [ {name: 'Signup'} ] })
-   }
+  useEffect(() => {
+    if (!props.auth) {
+      navigation.reset({ index: 0, routes: [{ name: 'Signup' }] })
+    }
   }, [props.auth])
-  
 
-  
-  
   const addTask = (task) => {
     //setTaskName=task
-    if (task == null || dateString == null) return;
-    
+    if (task == null || dateString == null) return
 
     //setTask=task
     const id = new Date().getTime().toString()
 
-     //task = { id: id, name: task, dateString: dateString, status: false }
-     const data={id: id, name: task, dateString: dateString, status: false}
+    //task = { id: id, name: task, dateString: dateString, status: false }
+    const data = { id: id, name: task, dateString: dateString, status: false }
 
-     {props.add('userTasks', data)}
-     
+    {
+      props.add('userTasks', data)
+    }
 
-     
-
-    setTasks([...tasks, task]);
+    setTasks([...tasks, task])
     //console.log(tasks)
     //console.log(tasks)
     //console.log(item)
 
-
-
-
-    Keyboard.dismiss();
-
+    Keyboard.dismiss()
   }
 
   /*const loadItems = (day) => {
@@ -123,8 +102,12 @@ const timeToString = (time) => {
 
   const renderItem = (item) => {
     return (
-      <TouchableOpacity  style={{marginRight: 10, marginTop: 17} }
-      onPress={() => {navigation.navigate("AddTask")}}>
+      <TouchableOpacity
+        style={{ marginRight: 10, marginTop: 17 }}
+        onPress={() => {
+          navigation.navigate('AddTask')
+        }}
+      >
         <Card>
           <Card.Content>
             <View
@@ -132,30 +115,32 @@ const timeToString = (time) => {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-              }}>
+              }}
+            >
               <Text>{item.name}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate("EditTask")}><Avatar.Text label="+" /></TouchableOpacity>
-             
+              <TouchableOpacity onPress={() => navigation.navigate('EditTask')}>
+                <Avatar.Text label="+" />
+              </TouchableOpacity>
             </View>
           </Card.Content>
         </Card>
       </TouchableOpacity>
-    );
-  };
+    )
+  }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Agenda
-        onDayPress={(day) => { setDateString(day.dateString);  console.log(dateString)}}
-
+        onDayPress={(day) => {
+          setDateString(day.dateString)
+          console.log(dateString)
+        }}
         items={items}
         //loadItemsForMonth={loadItems}
         selected={'2017-05-21'}
         renderItem={renderItem}
       />
-      <TaskInputField addTask={addTask}/>
+      <TaskInputField addTask={addTask} />
     </View>
-  );
-
-  
-  }
+  )
+}
